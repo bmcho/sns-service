@@ -34,7 +34,7 @@ class UserServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
 
-        Assertions.assertDoesNotThrow(() -> userService.join(userName, password));
+        Assertions.assertDoesNotThrow(() -> userService.signUp(userName, password));
     }
 
     @Test
@@ -46,7 +46,7 @@ class UserServiceTest {
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
-        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () ->  userService.join(userName,password));
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () ->  userService.signUp(userName,password));
     }
 
     @Test

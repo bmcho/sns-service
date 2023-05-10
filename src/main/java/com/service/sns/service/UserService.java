@@ -7,6 +7,7 @@ import com.service.sns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -15,11 +16,15 @@ public class UserService {
 
     private final UserEntityRepository userEntityRepository;
 
-    public User join(String userName, String password) {
+    public User signUp(String userName, String password) {
 
-        Optional<UserEntity> userEntity = userEntityRepository.findByUserName(userName);
-        userEntityRepository.save(new UserEntity());
-        return new User();
+        userEntityRepository.findByUserName(userName)
+                .ifPresent(x -> {
+                    throw new SnsApplicationException();
+                });
+
+        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName,password));
+        return User.fromEntity(userEntity);
     }
 
     public String login(String userName, String password) {

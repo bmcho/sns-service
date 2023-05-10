@@ -1,8 +1,7 @@
 package com.service.sns.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.service.sns.controller.request.UserJoinRequest;
+import com.service.sns.controller.request.UserSignUpRequest;
 import com.service.sns.controller.request.UserLoginRequest;
 import com.service.sns.exception.SnsApplicationException;
 import com.service.sns.model.User;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,11 +37,11 @@ class UserControllerTest {
         String password = "";
 
         // mocking
-        when(userService.join(userName, password)).thenReturn(mock(User.class));
+        when(userService.signUp(userName, password)).thenReturn(mock(User.class));
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))
+                        .content(objectMapper.writeValueAsBytes(new UserSignUpRequest(userName, password)))
                 ).andDo(print())
                 .andExpect(status().isOk());
     }
@@ -53,11 +51,11 @@ class UserControllerTest {
         String userName = "";
         String password = "";
 
-        when(userService.join(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.signUp(userName, password)).thenThrow(new SnsApplicationException());
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))
+                        .content(objectMapper.writeValueAsBytes(new UserSignUpRequest(userName, password)))
                 ).andDo(print())
                 .andExpect(status().isConflict());
     }
