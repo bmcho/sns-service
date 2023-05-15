@@ -3,6 +3,7 @@ package com.service.sns.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.sns.controller.request.UserSignUpRequest;
 import com.service.sns.controller.request.UserLoginRequest;
+import com.service.sns.exception.ErrorCode;
 import com.service.sns.exception.SnsApplicationException;
 import com.service.sns.model.User;
 import com.service.sns.service.UserService;
@@ -51,7 +52,7 @@ class UserControllerTest {
         String userName = "";
         String password = "";
 
-        when(userService.signUp(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.signUp(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +66,7 @@ class UserControllerTest {
         String userName = "";
         String password = "";
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +80,7 @@ class UserControllerTest {
         String userName = "";
         String password = "";
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +94,7 @@ class UserControllerTest {
         String userName = "";
         String password = "";
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,5 +1,17 @@
 package com.service.sns.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public class SnsApplicationException extends RuntimeException{
+@Getter
+@AllArgsConstructor
+public class SnsApplicationException extends RuntimeException {
+
+    private ErrorCode errorCode;
+    private String message;
+
+    @Override
+    public String getMessage() {
+        return String.format("%s. %s", errorCode.getMessage(), message);
+    }
 }
