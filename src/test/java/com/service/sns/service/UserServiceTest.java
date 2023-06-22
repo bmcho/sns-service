@@ -1,5 +1,6 @@
 package com.service.sns.service;
 
+import com.service.sns.exception.ErrorCode;
 import com.service.sns.exception.SnsApplicationException;
 import com.service.sns.fixture.UserEntityFixture;
 import com.service.sns.model.entity.UserEntity;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -20,9 +22,10 @@ class UserServiceTest {
 
     @Autowired
     private UserService userService;
-
     @MockBean
     private UserEntityRepository userEntityRepository;
+    @MockBean
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
     void successJoin() {
@@ -32,8 +35,8 @@ class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
+        when(bCryptPasswordEncoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
-
         Assertions.assertDoesNotThrow(() -> userService.signUp(userName, password));
     }
 
@@ -45,8 +48,10 @@ class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
+        when(bCryptPasswordEncoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () ->  userService.signUp(userName,password));
+        Assertions.assertEquals(ErrorCode.DUPLICATED_USER_NAME, e.getErrorCode());
     }
 
     @Test
@@ -57,6 +62,7 @@ class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
+        when(bCryptPasswordEncoder.matches(password, fixture.getPassword())).thenReturn(true);
         Assertions.assertDoesNotThrow(() -> userService.login(userName, password));
     }
 
@@ -68,7 +74,8 @@ class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
-        Assertions.assertThrows(SnsApplicationException.class, () -> userService.login(userName, password));
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> userService.login(userName, password));
+        Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }
 
     @Test
@@ -79,7 +86,8 @@ class UserServiceTest {
 
         UserEntity fixture = UserEntityFixture.get(userName, password);
 
-        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
-        Assertions.assertThrows(SnsApplicationException.class, () -> userService.login(userName, wrongPassword));
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
+        SnsApplicationException e =  Assertions.assertThrows(SnsApplicationException.class, () -> userService.login(userName, wrongPassword));
+        Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
     }
 }
