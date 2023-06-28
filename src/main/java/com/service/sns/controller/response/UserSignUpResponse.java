@@ -14,7 +14,7 @@ public class UserSignUpResponse {
     public static UserSignUpResponse fromUser(User user) {
         return new UserSignUpResponse(
                 user.getId(),
-                user.getUserName(),
+                user.getUsername(),
                 user.getUserRoleType()
         );
     }
