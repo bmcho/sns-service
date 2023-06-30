@@ -2,6 +2,8 @@ package com.service.sns.service;
 
 import com.service.sns.exception.ErrorCode;
 import com.service.sns.exception.SnsApplicationException;
+import com.service.sns.fixture.PostEntityFixture;
+import com.service.sns.fixture.UserEntityFixture;
 import com.service.sns.model.entity.PostEntity;
 import com.service.sns.model.entity.UserEntity;
 import com.service.sns.repository.PostEntityRepository;
@@ -51,8 +53,61 @@ public class PostServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
         when(postEntityRepository.save(any())).thenReturn(mock(PostEntity.class));
 
-        SnsApplicationException e =  Assertions.assertThrows(SnsApplicationException.class, () -> postService.create(title,body,userName));
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> postService.create(title, body, userName));
         Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
+    }
+
+    @Test
+    void postModifySuccess() {
+        String title = "test-title";
+        String body = "test-body";
+        String userName = "userName";
+        int postId = 1;
+
+        //mocking
+        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        UserEntity userEntity = postEntity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(mock(PostEntity.class)));
+
+        Assertions.assertDoesNotThrow(() -> postService.modify(title, body, userName, postId));
+    }
+
+    @Test
+    void postModifyNotFound() {
+        String title = "test-title";
+        String body = "test-body";
+        String userName = "userName";
+        int postId = 1;
+
+        //mocking
+        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        UserEntity userEntity = postEntity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
+
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> postService.modify(title, body, userName, postId));
+        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
+    @Test
+    void postModifyPermissionDenied() {
+        String title = "test-title";
+        String body = "test-body";
+        String userName = "userName";
+        int postId = 1;
+
+        //mocking
+        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        UserEntity writer = UserEntityFixture.get("userName1", "password");
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer));
+        when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> postService.modify(title, body, userName, postId));
+        Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, e.getErrorCode());
     }
 
 }

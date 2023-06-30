@@ -17,7 +17,7 @@ public class PostEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     @Column(name = "title")
     private String title;
     @Column(name = "body", columnDefinition = "TEXT")

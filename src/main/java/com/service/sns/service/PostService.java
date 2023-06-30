@@ -26,4 +26,15 @@ public class PostService {
         PostEntity savedPostEntity = postEntityRepository.save(PostEntity.of(title,body, userEntity));
         // return
     }
+
+    public void modify(String title, String body, String userName, int postId) {
+        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("User %s not founded", userName)));
+
+        // post 존재여부
+
+        // post 권한여부
+
+    }
+
 }
