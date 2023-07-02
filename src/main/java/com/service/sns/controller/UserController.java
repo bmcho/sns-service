@@ -22,13 +22,13 @@ public class UserController {
 
     @PostMapping("/sign-up")
     public Response<UserSignUpResponse> signUp(@RequestBody UserSignUpRequest request) {
-        User user = userService.signUp(request.getUserName(), request.getPassword());
+        User user = userService.signUp(request.getName(), request.getPassword());
         return Response.success(UserSignUpResponse.fromUser(user));
     }
 
     @PostMapping("/login")
     public Response<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        String token = userService.login(request.getUserName(), request.getPassword());
+        String token = userService.login(request.getName(), request.getPassword());
         return Response.success(new UserLoginResponse(token));
     }
 

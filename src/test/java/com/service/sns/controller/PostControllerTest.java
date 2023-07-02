@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -57,7 +58,6 @@ public class PostControllerTest {
         String title = "test-title";
         String body = "test-body";
 
-
         mockMvc.perform(post("/api/v1/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new PostCreateRequest(title, body)))
@@ -87,7 +87,6 @@ public class PostControllerTest {
         String title = "test-title";
         String body = "test-body";
 
-
         mockMvc.perform(put("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
@@ -116,7 +115,6 @@ public class PostControllerTest {
         String title = "test";
         String body = "test";
 
-
         mockMvc.perform(put("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
@@ -127,8 +125,6 @@ public class PostControllerTest {
     @Test
     @WithMockUser
     void postDeleteTest() throws Exception {
-//        when(postService.modify(eq(title), eq(body), any(), any()))
-//                .thenReturn(Post.fromEntity(PostEntityFixture.get("userName", 1, 1)));
         mockMvc.perform(delete("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
@@ -167,6 +163,43 @@ public class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void postFeedTest() throws Exception {
+        //mocking
+        when(postService.list(any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void postMyFeedTest() throws Exception {
+        //mocking
+        when(postService.my(any(), any())).thenReturn(Page.empty());
+
+
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test()
+    @WithAnonymousUser
+    void postMyFeedReturnFailWithoutLoginTest() throws Exception {
+        //mocking
+        when(postService.my(any(), any())).thenReturn(Page.empty());
+
+        mockMvc.perform(delete("/api/v1/posts/my")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 
 }
