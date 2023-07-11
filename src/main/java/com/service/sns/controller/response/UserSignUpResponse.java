@@ -3,7 +3,9 @@ package com.service.sns.controller.response;
 import com.service.sns.model.User;
 import com.service.sns.model.enums.UserRole;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class UserSignUpResponse {
 
