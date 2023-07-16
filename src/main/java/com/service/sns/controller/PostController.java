@@ -56,7 +56,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/likes")
-    public Response<Integer> likeCount(@PathVariable int postId, Authentication authentication) {
+    public Response<Long> likeCount(@PathVariable int postId, Authentication authentication) {
         return Response.success(postService.likeCount(postId));
     }
 
@@ -68,7 +68,7 @@ public class PostController {
 
     @GetMapping("/{postId}/comments")
     public Response<Page<CommentResponse>> comment(@PathVariable int postId, Pageable pageable, Authentication authentication) {
-        return Response.success(postService.comments(postId, pageable).map(CommentResponse::fromComment));
+        return Response.success(postService.getComments(postId, pageable).map(CommentResponse::fromComment));
     }
 
 }

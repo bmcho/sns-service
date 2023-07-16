@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 public class Alarm {
 
     private int id;
-    private User user;
     private AlarmType alarmType;
     private AlarmArgs args;
     private Timestamp registerAt;
@@ -22,7 +21,6 @@ public class Alarm {
     public static Alarm fromEntity(AlarmEntity alarmEntity) {
         return new Alarm(
                 alarmEntity.getId(),
-                User.fromEntity(alarmEntity.getUser()),
                 alarmEntity.getAlarmType(),
                 alarmEntity.getArgs(),
                 alarmEntity.getRegisteredAt(),

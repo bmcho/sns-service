@@ -28,7 +28,7 @@ public class AlarmEntity {
     private int id;
 
     // 리시버
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
