@@ -27,7 +27,9 @@ public class AuthenticationConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web
-                .ignoring().regexMatchers("^(?!/api).*");
+                .ignoring().regexMatchers("^(?!/api).*")
+                .regexMatchers("/api/*/users/signUp", "/api/*/users/login")
+                ;
     }
 
     @Bean

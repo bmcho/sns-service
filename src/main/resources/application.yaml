@@ -16,3 +16,8 @@ spring.datasource:
 jwt:
   secret-key: fast_campus.sns-application-2022.secret_key
   token.expired-time-ms: 2592000000
+
+
+spring:
+  redis:
+    url:
